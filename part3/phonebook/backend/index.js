@@ -1,7 +1,14 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
+// delete before deploy
+const cors = require('cors')
+app.use(cors())
+// ---
+
 app.use(express.json())
+app.use(morgan('tiny'))
 
 let persons = [
   {
@@ -78,7 +85,7 @@ app.post('/api/persons', (request, response) => {
     name: body.name,
     number: body.number
   }
-
+  console.log(body)
   persons = persons.concat(person)
 
   response.json(person)
@@ -91,7 +98,7 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
