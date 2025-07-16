@@ -58,7 +58,7 @@ const App = () => {
   }, [])
 
   const clearNotification = () => {
-    setTimeout(() => setNotificationMessage({ message: null, type: 'info' }), 4000)
+    setTimeout(() => setNotificationMessage({ message: null, type: 'info' }), 5000)
   }
 
   const addPerson = (event) => {
@@ -81,7 +81,11 @@ const App = () => {
           setNewNumber('')
         })
         .catch(error => {
-          console.log(error, "fail")
+          setNotificationMessage({
+            message: error.response.data.error,
+            type: 'error'
+          })
+          clearNotification()
         })
     } else {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
@@ -101,10 +105,17 @@ const App = () => {
             setNewNumber('')
           })
           .catch(error => {
+            if (error.status === 400) {
             setNotificationMessage({
-              message: `Information of ${personObject.name} has already been removed from server`,
+              message: error.response.data.error,
               type: 'error'
             })
+            } else {
+            setNotificationMessage({
+              message: `${newName} was already removed from the server`,
+              type: 'error'
+            })
+            }
             clearNotification()
           })
       }
